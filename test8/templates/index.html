@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test8 Configuration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>test8 Configuration</h1>
+        <form id="configForm">
+            <label for="apiKey">API Key:</label>
+            <input type="text" id="apiKey" name="apiKey" value="{{ config.api_key }}">
+
+            <label for="modelProvider">Model Provider:</label>
+            <select id="modelProvider" name="modelProvider">
+                <option value="">Select Provider</option>
+                <option value="OpenAI" {% if config.model_provider == 'OpenAI' %}selected{% endif %}>OpenAI</option>
+                <option value="Anthropic" {% if config.model_provider == 'Anthropic' %}selected{% endif %}>Anthropic</option>
+            </select>
+
+            <label for="model">Model:</label>
+            <select id="model" name="model" disabled>
+                <option value="">Select Model</option>
+            </select>
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+    <script>
+        const modelProvider = document.getElementById('modelProvider');
+        const model = document.getElementById('model');
+        const form = document.getElementById('configForm');
+
+        const models = {
+            OpenAI: ['gpt-4o-mini', 'gpt-4o-2024-08-06'],
+            Anthropic: ['claude-3-5-sonnet-20240620', 'claude-3-haiku-20240307']
+        };
+
+        modelProvider.addEventListener('change', function() {
+            model.innerHTML = '<option value="">Select Model</option>';
+            model.disabled = !this.value;
+            if (this.value) {
+                models[this.value].forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m;
+                    option.textContent = m;
+                    if (m === '{{ config.model }}') {
+                        option.selected = true;
+                    }
+                    model.appendChild(option);
+                });
+            }
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const config = {
+                api_key: document.getElementById('apiKey').value,
+                model_provider: modelProvider.value,
+                model: model.value
+            };
+            fetch('/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Configuration saved successfully!');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An error occurred while saving the configuration.');
+            });
+        });
+
+        // Initialize model select based on saved config
+        if (modelProvider.value) {
+            modelProvider.dispatchEvent(new Event('change'));
+        }
+    </script>
+</body>
+</html>
