@@ -122,6 +122,8 @@ button:hover {
     left: 20px;
     bottom: 20px;
     font-size: 0.9em;
+    opacity: 0.3;
+    transition: opacity 0.3s;
 }
 
 .author a {
@@ -131,6 +133,7 @@ button:hover {
 
 .author a:hover {
     text-decoration: underline;
+    opacity: 1;
 }
 
 .model-help-btn {
@@ -308,4 +311,35 @@ button:hover {
 #runTestsBtn:disabled {
     background-color: #6c757d;
     cursor: not-allowed;
+}
+
+.prompt-section {
+    margin-top: 20px;
+}
+
+.prompt-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.prompt-buttons .btn {
+    flex: 1;
+}
+
+.prompt-buttons .btn.active {
+    opacity: 1;
+}
+
+.prompt-buttons .btn:not(.active) {
+    opacity: 0.6;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    resize: vertical;
 }

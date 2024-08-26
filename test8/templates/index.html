@@ -27,6 +27,24 @@
                     <option value="">Select Model</option>
                 </select>
 
+                <div class="prompt-section">
+                    <label>System Prompt:</label>
+                    <div class="prompt-buttons">
+                        <button type="button" class="btn btn-success" id="defaultSystemPrompt">Default System Prompt</button>
+                        <button type="button" class="btn btn-danger" id="customSystemPrompt">Custom System Prompt</button>
+                    </div>
+                    <textarea id="systemPrompt" name="systemPrompt" rows="4" style="display: none;">{{ config.system_prompt }}</textarea>
+                </div>
+
+                <div class="prompt-section">
+                    <label>User Prompt:</label>
+                    <div class="prompt-buttons">
+                        <button type="button" class="btn btn-success" id="defaultUserPrompt">Default User Prompt</button>
+                        <button type="button" class="btn btn-danger" id="customUserPrompt">Custom User Prompt</button>
+                    </div>
+                    <textarea id="userPrompt" name="userPrompt" rows="4" style="display: none;">{{ config.user_prompt }}</textarea>
+                </div>
+
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
             </form>
         </div>
@@ -114,12 +132,16 @@
             }
         });
 
+        // form submission with prompt data
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const config = {
                 api_key: document.getElementById('apiKey').value,
                 model_provider: modelProvider.value,
-                model: model.value
+                model: model.value,
+                system_prompt: systemPromptTextarea.value,
+                user_prompt: userPromptTextarea.value
             };
             fetch('/save', {
                 method: 'POST',
@@ -138,6 +160,21 @@
                 console.error('Error:', error);
                 alert('An error occurred while saving the configuration.');
             });
+        });
+
+        // Load saved configuration on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if ('{{ config.system_prompt }}' !== defaultSystemPromptText) {
+                customSystemPrompt.click();
+            } else {
+                defaultSystemPrompt.click();
+            }
+
+            if ('{{ config.user_prompt }}' !== defaultUserPromptText) {
+                customUserPrompt.click();
+            } else {
+                defaultUserPrompt.click();
+            }
         });
 
         // Initialize model select based on saved config
@@ -252,6 +289,43 @@
         };
 
         loadFiles(currentPath);
+
+        // JavaScript for prompt customization
+        const defaultSystemPrompt = document.getElementById('defaultSystemPrompt');
+        const customSystemPrompt = document.getElementById('customSystemPrompt');
+        const systemPromptTextarea = document.getElementById('systemPrompt');
+        const defaultUserPrompt = document.getElementById('defaultUserPrompt');
+        const customUserPrompt = document.getElementById('customUserPrompt');
+        const userPromptTextarea = document.getElementById('userPrompt');
+
+        const defaultSystemPromptText = "You are a helpful assistant that generates Python unit tests for the file named '{file_name}'. Do not include code blocks or explanations in your response, just the unittest code.";
+        const defaultUserPromptText = "Please generate unit tests for the following Python code from the file '{file_name}':\n\n{code_content}\n\nProvide a complete unittest class with test methods for each function in the code.\nDo not include any explanations or code blocks, just the unittest code.";
+
+        defaultSystemPrompt.addEventListener('click', () => {
+            systemPromptTextarea.value = defaultSystemPromptText;
+            systemPromptTextarea.style.display = 'none';
+            defaultSystemPrompt.classList.add('active');
+            customSystemPrompt.classList.remove('active');
+        });
+
+        customSystemPrompt.addEventListener('click', () => {
+            systemPromptTextarea.style.display = 'block';
+            defaultSystemPrompt.classList.remove('active');
+            customSystemPrompt.classList.add('active');
+        });
+
+        defaultUserPrompt.addEventListener('click', () => {
+            userPromptTextarea.value = defaultUserPromptText;
+            userPromptTextarea.style.display = 'none';
+            defaultUserPrompt.classList.add('active');
+            customUserPrompt.classList.remove('active');
+        });
+
+        customUserPrompt.addEventListener('click', () => {
+            userPromptTextarea.style.display = 'block';
+            defaultUserPrompt.classList.remove('active');
+            customUserPrompt.classList.add('active');
+        });
     </script>
 </body>
 </html>
