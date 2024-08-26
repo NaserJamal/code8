@@ -40,8 +40,14 @@
                 <div class="prompt-section">
                     <label>System Prompt:</label>
                     <div class="prompt-buttons">
-                        <button type="button" class="btn btn-outline" id="defaultSystemPrompt">Default</button>
-                        <button type="button" class="btn btn-outline" id="customSystemPrompt">Custom</button>
+                        <button type="button" class="btn btn-outline tooltip" id="defaultSystemPrompt">
+                            Default
+                            <span class="tooltiptext">Use the default system prompt</span>
+                        </button>
+                        <button type="button" class="btn btn-outline tooltip" id="customSystemPrompt">
+                            Custom
+                            <span class="tooltiptext">Use a custom system prompt</span>
+                        </button>
                     </div>
                     <textarea id="systemPrompt" name="systemPrompt" rows="4" style="display: none;">{{ config.system_prompt }}</textarea>
                 </div>
@@ -49,8 +55,14 @@
                 <div class="prompt-section">
                     <label>User Prompt:</label>
                     <div class="prompt-buttons">
-                        <button type="button" class="btn btn-outline" id="defaultUserPrompt">Default</button>
-                        <button type="button" class="btn btn-outline" id="customUserPrompt">Custom</button>
+                        <button type="button" class="btn btn-outline tooltip" id="defaultUserPrompt">
+                            Default
+                            <span class="tooltiptext">Use the default user prompt</span>
+                        </button>
+                        <button type="button" class="btn btn-outline tooltip" id="customUserPrompt">
+                            Custom
+                            <span class="tooltiptext">Use a custom user prompt</span>
+                        </button>
                     </div>
                     <textarea id="userPrompt" name="userPrompt" rows="4" style="display: none;">{{ config.user_prompt }}</textarea>
                 </div>
@@ -117,7 +129,6 @@
             </div>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const modelProvider = document.getElementById('modelProvider');
@@ -143,6 +154,7 @@
 
             let currentPath = '.';
             let selectedFilesList = [];
+            let isCustomPrompt = {system: false, user: false};
 
             function updateModelOptions() {
                 model.innerHTML = '<option value="">Select Model</option>';
@@ -158,13 +170,16 @@
             }
 
             function initializePrompts() {
-                if (systemPromptTextarea.value !== defaultSystemPromptText) {
+                isCustomPrompt.system = systemPromptTextarea.value !== defaultSystemPromptText;
+                isCustomPrompt.user = userPromptTextarea.value !== defaultUserPromptText;
+                
+                if (isCustomPrompt.system) {
                     customSystemPrompt.click();
                 } else {
                     defaultSystemPrompt.click();
                 }
 
-                if (userPromptTextarea.value !== defaultUserPromptText) {
+                if (isCustomPrompt.user) {
                     customUserPrompt.click();
                 } else {
                     defaultUserPrompt.click();
@@ -186,8 +201,8 @@
                             const div = createFileItem(item.name, item.type);
                             if (item.type === 'directory') {
                                 div.onclick = () => loadFiles(item.path);
-                            } else if (item.name.endsWith('.py')) {
-                                div.onclick = () => toggleFileSelection(item);
+                            } else {
+                                div.onclick = () => toggleFileSelection(item, div);
                             }
                             fileList.appendChild(div);
                         });
@@ -207,12 +222,18 @@
                 return div;
             }
 
-            function toggleFileSelection(file) {
+            function toggleFileSelection(file, div) {
+                if (!isCustomPrompt.system && !isCustomPrompt.user && !file.name.endsWith('.py')) {
+                    showErrorMessage('Only .py files can be selected with default prompts.');
+                    return;
+                }
                 const index = selectedFilesList.findIndex(f => f.path === file.path);
                 if (index > -1) {
                     selectedFilesList.splice(index, 1);
+                    div.classList.remove('selected');
                 } else {
                     selectedFilesList.push(file);
+                    div.classList.add('selected');
                 }
                 updateSelectedFiles();
             }
@@ -268,12 +289,14 @@
                 systemPromptTextarea.style.display = 'none';
                 defaultSystemPrompt.classList.add('active');
                 customSystemPrompt.classList.remove('active');
+                isCustomPrompt.system = false;
             });
 
             customSystemPrompt.addEventListener('click', () => {
                 systemPromptTextarea.style.display = 'block';
                 defaultSystemPrompt.classList.remove('active');
                 customSystemPrompt.classList.add('active');
+                isCustomPrompt.system = true;
             });
 
             defaultUserPrompt.addEventListener('click', () => {
@@ -281,12 +304,14 @@
                 userPromptTextarea.style.display = 'none';
                 defaultUserPrompt.classList.add('active');
                 customUserPrompt.classList.remove('active');
+                isCustomPrompt.user = false;
             });
 
             customUserPrompt.addEventListener('click', () => {
                 userPromptTextarea.style.display = 'block';
                 defaultUserPrompt.classList.remove('active');
                 customUserPrompt.classList.add('active');
+                isCustomPrompt.user = true;
             });
 
             form.addEventListener('submit', function(e) {
@@ -348,6 +373,22 @@
             updateModelOptions();
             initializePrompts();
             loadFiles(currentPath);
+
+            // Load saved configuration
+            fetch('/load_config')
+                .then(response => response.json())
+                .then(config => {
+                    document.getElementById('apiKey').value = config.api_key || '';
+                    modelProvider.value = config.model_provider || '';
+                    updateModelOptions();
+                    model.value = config.model || '';
+                    systemPromptTextarea.value = config.system_prompt || defaultSystemPromptText;
+                    userPromptTextarea.value = config.user_prompt || defaultUserPromptText;
+                    initializePrompts();
+                })
+                .catch(error => {
+                    console.error('Error loading configuration:', error);
+                });
 
             // Model Help Modal
             const modal = document.getElementById("modelHelpModal");

@@ -207,7 +207,8 @@ footer {
 }
 
 .author a:hover {
-    color: #3498db;
+    color: #b4ffec;
+    opacity: 1;
 }
 
 .model-help-btn {
@@ -376,6 +377,11 @@ footer {
     background: #555;
 }
 
+.file-item.selected {
+    background-color: rgba(52, 152, 219, 0.2);
+    border-left: 3px solid var(--primary-color);
+}
+
 /* Tooltip styles */
 .tooltip {
     position: relative;
@@ -384,7 +390,7 @@ footer {
 
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 200px;
+    width: 120px;
     background-color: #555;
     color: #fff;
     text-align: center;
@@ -394,7 +400,7 @@ footer {
     z-index: 1;
     bottom: 125%;
     left: 50%;
-    margin-left: -100px;
+    margin-left: -60px;
     opacity: 0;
     transition: opacity 0.3s;
 }
@@ -402,6 +408,17 @@ footer {
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
 }
 
 /* Loading spinner */
