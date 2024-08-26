@@ -75,19 +75,27 @@ button:hover {
 
 .model-help-btn {
     position: fixed;
-    left: 20px;
+    right: 20px;
     bottom: 20px;
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
+    padding: 10px;
+    border-radius: 50%;
     cursor: pointer;
     font-size: 0.9em;
     display: flex;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
+
+.model-help-btn i {
+    font-size: 1.2em;
+}
+
 
 .model-help-btn:hover {
     background-color: #0056b3;
