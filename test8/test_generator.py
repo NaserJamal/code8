@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from openai import OpenAI
 from anthropic import Anthropic
 
@@ -10,6 +11,15 @@ def load_config():
         with open(CONFIG_FILE, 'r') as f:
             return json.load(f)
     return {"api_key": "", "model_provider": "", "model": ""}
+
+def remove_code_blocks(text):
+    # Remove ```python and ``` from the beginning and end of the text
+    text = re.sub(r'^```python', '', text)
+    text = re.sub(r'\n^```python', '', text)
+    text = re.sub(r'^```python\n', '', text)
+    text = re.sub(r'```$', '', text)
+    text = re.sub(r'\n```$', '', text)
+    return text
 
 def generate_tests(input_file):
     config = load_config()
@@ -33,7 +43,7 @@ def generate_tests(input_file):
     {code_content}
 
     Provide a complete unittest class with test methods for each function in the code.
-    Do not include any explanations, do not use code blocks, just the unittest code.
+    Do not include any explanations or code blocks, just the unittest code.
     """
 
     try:
@@ -51,7 +61,7 @@ def generate_tests(input_file):
             client = Anthropic(api_key=api_key)
             response = client.messages.create(
                 model=model,
-                max_tokens=1000,
+                max_tokens=4000,
                 system=system_message,
                 messages=[
                     {"role": "user", "content": user_prompt}
@@ -64,11 +74,13 @@ def generate_tests(input_file):
         print(f"Error calling API: {str(e)}")
         return
 
+    test_code = remove_code_blocks(test_code)
+
     base_name = os.path.splitext(file_name)[0]
     test_file_name = f"test_{base_name}.py"
 
     with open(test_file_name, 'w') as test_file:
-        test_file.write(f"import {base_name}\n\n")
+        # test_file.write(f"import {base_name}\n\n")
         test_file.write(test_code)
 
     print(f"Unit tests generated in {test_file_name}")

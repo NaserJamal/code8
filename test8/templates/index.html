@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>test8 Configuration</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -27,6 +28,52 @@
 
             <button type="submit">Save</button>
         </form>
+    </div>
+    
+    <div class="footer">
+        <a href="https://www.linkedin.com/in/naserjamal/" target="_blank" class="author">By Naser Jamal</a>
+        <button id="modelHelpBtn" class="model-help-btn">Model Help</button>
+    </div>
+
+    <div id="modelHelpModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="tab">
+                <button class="tablinks active" onclick="openTab(event, 'Quality')"><i class="fas fa-star"></i> Quality</button>
+                <button class="tablinks" onclick="openTab(event, 'Speed')"><i class="fas fa-bolt"></i> Speed</button>
+                <button class="tablinks" onclick="openTab(event, 'Price')"><i class="fas fa-dollar-sign"></i> Price</button>
+            </div>
+
+            <div id="Quality" class="tabcontent" style="display:block;">
+                <h3>Quality Ranking</h3>
+                <ol class="ranking">
+                    <li>Model 1 <span class="description">Description for Model 1</span></li>
+                    <li>Model 2 <span class="description">Description for Model 2</span></li>
+                    <li>Model 3 <span class="description">Description for Model 3</span></li>
+                    <li>Model 4 <span class="description">Description for Model 4</span></li>
+                </ol>
+            </div>
+
+            <div id="Speed" class="tabcontent">
+                <h3>Speed Ranking</h3>
+                <ol class="ranking">
+                    <li>Model 1 <span class="description">Description for Model 1</span></li>
+                    <li>Model 2 <span class="description">Description for Model 2</span></li>
+                    <li>Model 3 <span class="description">Description for Model 3</span></li>
+                    <li>Model 4 <span class="description">Description for Model 4</span></li>
+                </ol>
+            </div>
+
+            <div id="Price" class="tabcontent">
+                <h3>Price Ranking</h3>
+                <ol class="ranking">
+                    <li>Model 1 <span class="description">Description for Model 1</span></li>
+                    <li>Model 2 <span class="description">Description for Model 2</span></li>
+                    <li>Model 3 <span class="description">Description for Model 3</span></li>
+                    <li>Model 4 <span class="description">Description for Model 4</span></li>
+                </ol>
+            </div>
+        </div>
     </div>
     <script>
         const modelProvider = document.getElementById('modelProvider');
@@ -83,6 +130,39 @@
         // Initialize model select based on saved config
         if (modelProvider.value) {
             modelProvider.dispatchEvent(new Event('change'));
+        }
+
+        // Model Help Modal
+        var modal = document.getElementById("modelHelpModal");
+        var btn = document.getElementById("modelHelpBtn");
+        var span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
         }
     </script>
 </body>
