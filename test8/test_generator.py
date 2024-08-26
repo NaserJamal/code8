@@ -33,7 +33,7 @@ def generate_tests(input_file):
     {code_content}
 
     Provide a complete unittest class with test methods for each function in the code.
-    Do not include any explanations, just the unittest code.
+    Do not include any explanations, do not use code blocks, just the unittest code.
     """
 
     try:
@@ -52,8 +52,8 @@ def generate_tests(input_file):
             response = client.messages.create(
                 model=model,
                 max_tokens=1000,
+                system=system_message,
                 messages=[
-                    {"role": "system", "content": system_message},
                     {"role": "user", "content": user_prompt}
                 ]
             )

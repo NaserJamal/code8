@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import json
 import os
+import webbrowser
+import threading
 
 app = Flask(__name__)
 
@@ -27,5 +29,9 @@ def save():
     save_config(config)
     return jsonify({"status": "success"})
 
+def open_browser():
+    webbrowser.open_new('http://127.0.0.1:5000/')
+
 def run_config_ui():
-    app.run(debug=True)
+    threading.Timer(1.25, open_browser).start()
+    app.run(debug=False)
