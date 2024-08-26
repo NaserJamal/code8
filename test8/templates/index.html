@@ -110,11 +110,33 @@
         const modelProvider = document.getElementById('modelProvider');
         const model = document.getElementById('model');
         const form = document.getElementById('configForm');
+        const defaultSystemPrompt = document.getElementById('defaultSystemPrompt');
+        const customSystemPrompt = document.getElementById('customSystemPrompt');
+        const systemPromptTextarea = document.getElementById('systemPrompt');
+        const defaultUserPrompt = document.getElementById('defaultUserPrompt');
+        const customUserPrompt = document.getElementById('customUserPrompt');
+        const userPromptTextarea = document.getElementById('userPrompt');
 
         const models = {
             OpenAI: ['gpt-4o-mini', 'gpt-4o-2024-08-06'],
             Anthropic: ['claude-3-5-sonnet-20240620', 'claude-3-haiku-20240307']
         };
+
+        const defaultSystemPromptText = "You are a helpful assistant that generates Python unit tests for the file named '{file_name}'. Do not include code blocks or explanations in your response, just the unittest code.";
+        const defaultUserPromptText = "Please generate unit tests for the following Python code from the file '{file_name}':\n\n{code_content}\n\nProvide a complete unittest class with test methods for each function in the code.\nDo not include any explanations or code blocks, just the unittest code.";
+
+        function updateModelOptions() {
+            model.innerHTML = '<option value="">Select Model</option>';
+            model.disabled = !modelProvider.value;
+            if (modelProvider.value) {
+                models[modelProvider.value].forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m;
+                    option.textContent = m;
+                    model.appendChild(option);
+                });
+            }
+        }
 
         modelProvider.addEventListener('change', function() {
             model.innerHTML = '<option value="">Select Model</option>';
@@ -164,17 +186,11 @@
 
         // Load saved configuration on page load
         document.addEventListener('DOMContentLoaded', () => {
-            if ('{{ config.system_prompt }}' !== defaultSystemPromptText) {
-                customSystemPrompt.click();
-            } else {
-                defaultSystemPrompt.click();
+            updateModelOptions();
+            if (model.value) {
+                model.value = '{{ config.model }}';
             }
-
-            if ('{{ config.user_prompt }}' !== defaultUserPromptText) {
-                customUserPrompt.click();
-            } else {
-                defaultUserPrompt.click();
-            }
+            initializePrompts();
         });
 
         // Initialize model select based on saved config
@@ -291,15 +307,31 @@
         loadFiles(currentPath);
 
         // JavaScript for prompt customization
-        const defaultSystemPrompt = document.getElementById('defaultSystemPrompt');
-        const customSystemPrompt = document.getElementById('customSystemPrompt');
-        const systemPromptTextarea = document.getElementById('systemPrompt');
-        const defaultUserPrompt = document.getElementById('defaultUserPrompt');
-        const customUserPrompt = document.getElementById('customUserPrompt');
-        const userPromptTextarea = document.getElementById('userPrompt');
+        // const defaultSystemPrompt = document.getElementById('defaultSystemPrompt');
+        // const customSystemPrompt = document.getElementById('customSystemPrompt');
+        // const systemPromptTextarea = document.getElementById('systemPrompt');
+        // const defaultUserPrompt = document.getElementById('defaultUserPrompt');
+        // const customUserPrompt = document.getElementById('customUserPrompt');
+        // const userPromptTextarea = document.getElementById('userPrompt');
 
-        const defaultSystemPromptText = "You are a helpful assistant that generates Python unit tests for the file named '{file_name}'. Do not include code blocks or explanations in your response, just the unittest code.";
-        const defaultUserPromptText = "Please generate unit tests for the following Python code from the file '{file_name}':\n\n{code_content}\n\nProvide a complete unittest class with test methods for each function in the code.\nDo not include any explanations or code blocks, just the unittest code.";
+        // const defaultSystemPromptText = "You are a helpful assistant that generates Python unit tests for the file named '{file_name}'. Do not include code blocks or explanations in your response, just the unittest code.";
+        // const defaultUserPromptText = "Please generate unit tests for the following Python code from the file '{file_name}':\n\n{code_content}\n\nProvide a complete unittest class with test methods for each function in the code.\nDo not include any explanations or code blocks, just the unittest code.";
+
+        modelProvider.addEventListener('change', updateModelOptions);
+
+        function initializePrompts() {
+            if (systemPromptTextarea.value !== defaultSystemPromptText) {
+                customSystemPrompt.click();
+            } else {
+                defaultSystemPrompt.click();
+            }
+
+            if (userPromptTextarea.value !== defaultUserPromptText) {
+                customUserPrompt.click();
+            } else {
+                defaultUserPrompt.click();
+            }
+        }
 
         defaultSystemPrompt.addEventListener('click', () => {
             systemPromptTextarea.value = defaultSystemPromptText;
