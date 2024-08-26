@@ -39,6 +39,7 @@
 import os
 import json
 import asyncio
+import webbrowser
 from flask import Flask, render_template, request, jsonify
 from .test_generator import generate_tests
 
@@ -92,7 +93,8 @@ def run_tests():
     return jsonify({"status": "success", "message": f"Tests generated for {len(files)} files"})
 
 def run_config_ui():
-    app.run(debug=True)
+    webbrowser.open('http://127.0.0.1:5000/')
+    app.run(debug=False)
 
 if __name__ == '__main__':
     run_config_ui()
