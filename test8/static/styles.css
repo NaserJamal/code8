@@ -8,9 +8,16 @@ body {
 
 .container {
     width: 80%;
-    margin: auto;
+    margin: 20px auto;
     overflow: hidden;
+}
+
+.config-section, .file-browser-section {
+    background: #fff;
     padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 h1 {
@@ -18,23 +25,69 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+h2 i {
+    margin-right: 10px;
+    color: #007bff;
+}
+
 form {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
+    margin-top: 20px;
 }
 
 label {
     display: block;
     margin: 10px 0 5px;
+    font-weight: bold;
 }
 
 input[type="text"], select {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    font-size: 16px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.btn i {
+    margin-right: 5px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-success {
+    background-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
 }
 
 button {
@@ -65,11 +118,18 @@ button:hover {
 }
 
 .author {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    font-size: 0.9em;
+}
+
+.author a {
     color: #555;
     text-decoration: none;
 }
 
-.author:hover {
+.author a:hover {
     text-decoration: underline;
 }
 
@@ -80,15 +140,14 @@ button:hover {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 0.9em;
+    font-size: 1.2em;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
@@ -204,11 +263,13 @@ button:hover {
     border: 1px solid #ddd;
     padding: 10px;
     margin-bottom: 10px;
+    border-radius: 4px;
 }
 
 .file-item {
     padding: 5px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .file-item:hover {

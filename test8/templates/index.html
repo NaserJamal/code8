@@ -9,36 +9,38 @@
 </head>
 <body>
     <div class="container">
-        <h1>test8 Configuration</h1>
-        <form id="configForm">
-            <label for="apiKey">API Key:</label>
-            <input type="text" id="apiKey" name="apiKey" value="{{ config.api_key }}">
+        <div class="config-section">
+            <h2><i class="fas fa-cog"></i> Configuration</h2>
+            <form id="configForm">
+                <label for="apiKey">API Key:</label>
+                <input type="text" id="apiKey" name="apiKey" value="{{ config.api_key }}">
 
-            <label for="modelProvider">Model Provider:</label>
-            <select id="modelProvider" name="modelProvider">
-                <option value="">Select Provider</option>
-                <option value="OpenAI" {% if config.model_provider == 'OpenAI' %}selected{% endif %}>OpenAI</option>
-                <option value="Anthropic" {% if config.model_provider == 'Anthropic' %}selected{% endif %}>Anthropic</option>
-            </select>
+                <label for="modelProvider">Model Provider:</label>
+                <select id="modelProvider" name="modelProvider">
+                    <option value="">Select Provider</option>
+                    <option value="OpenAI" {% if config.model_provider == 'OpenAI' %}selected{% endif %}>OpenAI</option>
+                    <option value="Anthropic" {% if config.model_provider == 'Anthropic' %}selected{% endif %}>Anthropic</option>
+                </select>
 
-            <label for="model">Model:</label>
-            <select id="model" name="model" disabled>
-                <option value="">Select Model</option>
-            </select>
+                <label for="model">Model:</label>
+                <select id="model" name="model" disabled>
+                    <option value="">Select Model</option>
+                </select>
 
-            <button type="submit">Save</button>
-        </form>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+            </form>
+        </div>
 
-        <div id="fileBrowser">
-            <h2>File Browser</h2>
+        <div class="file-browser-section">
+            <h2><i class="fas fa-folder-open"></i> File Browser</h2>
             <div id="fileList"></div>
             <div id="selectedFiles"></div>
-            <button id="runTestsBtn" disabled>Run Tests</button>
+            <button id="runTestsBtn" class="btn btn-success" disabled><i class="fas fa-play"></i> Run Tests</button>
         </div>
     </div>
     
-    <div class="footer">
-        <a href="https://www.linkedin.com/in/naserjamal/" target="_blank" class="author">By Naser Jamal</a>
+    <div class="author">
+        <a href="https://www.linkedin.com/in/naserjamal/" target="_blank">By Naser Jamal</a>
     </div>
 
     <button id="modelHelpBtn" class="model-help-btn" title="Model Help">
@@ -142,7 +144,7 @@
         if (modelProvider.value) {
             modelProvider.dispatchEvent(new Event('change'));
         }
-        
+
         // Model Help Modal
         var modal = document.getElementById("modelHelpModal");
         var btn = document.getElementById("modelHelpBtn");
