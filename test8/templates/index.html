@@ -138,6 +138,11 @@
             });
         });
 
+        // Initialize model select based on saved config
+        if (modelProvider.value) {
+            modelProvider.dispatchEvent(new Event('change'));
+        }
+        
         // Model Help Modal
         var modal = document.getElementById("modelHelpModal");
         var btn = document.getElementById("modelHelpBtn");
