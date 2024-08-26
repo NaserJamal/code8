@@ -190,3 +190,61 @@ button:hover {
     color: #666;
     margin-top: 5px;
 }
+
+#fileBrowser {
+    margin-top: 20px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+#fileList {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.file-item {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.file-item:hover {
+    background-color: #f0f0f0;
+}
+
+.file-item.directory {
+    color: #007bff;
+}
+
+.file-item.file {
+    color: #333;
+}
+
+#selectedFiles {
+    margin-bottom: 10px;
+}
+
+.selected-file {
+    display: inline-block;
+    background-color: #e9ecef;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+}
+
+#runTestsBtn {
+    background-color: #28a745;
+}
+
+#runTestsBtn:hover {
+    background-color: #218838;
+}
+
+#runTestsBtn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}

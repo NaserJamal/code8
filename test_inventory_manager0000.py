@@ -24,13 +24,19 @@ class TestInventoryManager(unittest.TestCase):
         self.assertEqual(self.manager.get_quantity("apple"), 3)
 
     def test_remove_item_not_enough(self):
-        self.manager.add_item("apple", 5)
-        result = self.manager.remove_item("apple", 6)
+        self.manager.add_item("apple", 3)
+        result = self.manager.remove_item("apple", 5)
         self.assertEqual(result, "Error: Not enough apple in inventory.")
 
     def test_remove_item_not_found(self):
         result = self.manager.remove_item("banana", 1)
         self.assertEqual(result, "Error: banana not found in inventory.")
+
+    def test_remove_item_zero_quantity(self):
+        self.manager.add_item("apple", 2)
+        self.manager.remove_item("apple", 2)
+        result = self.manager.remove_item("apple", 1)
+        self.assertEqual(result, "Error: apple not found in inventory.")
 
     def test_get_quantity_existing(self):
         self.manager.add_item("apple", 5)
@@ -42,17 +48,10 @@ class TestInventoryManager(unittest.TestCase):
     def test_list_inventory_empty(self):
         self.assertEqual(self.manager.list_inventory(), {})
 
-    def test_list_inventory(self):
+    def test_list_inventory_non_empty(self):
         self.manager.add_item("apple", 5)
         self.manager.add_item("banana", 3)
         self.assertEqual(self.manager.list_inventory(), {"apple": 5, "banana": 3})
-
-    def test_remove_item_zero_quantity(self):
-        self.manager.add_item("apple", 5)
-        self.manager.remove_item("apple", 5)
-        self.assertEqual(self.manager.get_quantity("apple"), 0)
-        self.assertEqual(self.manager.list_inventory(), {})
-
 
 if __name__ == "__main__":
     unittest.main()

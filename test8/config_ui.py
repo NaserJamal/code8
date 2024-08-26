@@ -1,8 +1,46 @@
-from flask import Flask, render_template, request, jsonify
-import json
+# from flask import Flask, render_template, request, jsonify
+# import json
+# import os
+# import webbrowser
+# import threading
+# from .test_generator import generate_tests
+
+# app = Flask(__name__)
+
+# CONFIG_FILE = 'config.json'
+
+# def load_config():
+#     if os.path.exists(CONFIG_FILE):
+#         with open(CONFIG_FILE, 'r') as f:
+#             return json.load(f)
+#     return {"api_key": "", "model_provider": "", "model": ""}
+
+# def save_config(config):
+#     with open(CONFIG_FILE, 'w') as f:
+#         json.dump(config, f)
+
+# @app.route('/')
+# def index():
+#     config = load_config()
+#     return render_template('index.html', config=config)
+
+# @app.route('/save', methods=['POST'])
+# def save():
+#     config = request.json
+#     save_config(config)
+#     return jsonify({"status": "success"})
+
+# def open_browser():
+#     webbrowser.open_new('http://127.0.0.1:5000/')
+
+# def run_config_ui():
+#     threading.Timer(1.25, open_browser).start()
+#     app.run(debug=False)
 import os
-import webbrowser
-import threading
+import json
+import asyncio
+from flask import Flask, render_template, request, jsonify
+from .test_generator import generate_tests
 
 app = Flask(__name__)
 
@@ -29,9 +67,32 @@ def save():
     save_config(config)
     return jsonify({"status": "success"})
 
-def open_browser():
-    webbrowser.open_new('http://127.0.0.1:5000/')
+@app.route('/browse')
+def browse():
+    path = request.args.get('path', '.')
+    items = []
+    for item in os.listdir(path):
+        full_path = os.path.join(path, item)
+        items.append({
+            'name': item,
+            'path': full_path,
+            'type': 'directory' if os.path.isdir(full_path) else 'file'
+        })
+    return jsonify(items)
+
+@app.route('/run_tests', methods=['POST'])
+def run_tests():
+    files = request.json['files']
+    
+    async def run_tests_async():
+        tasks = [asyncio.to_thread(generate_tests, file) for file in files]
+        await asyncio.gather(*tasks)
+    
+    asyncio.run(run_tests_async())
+    return jsonify({"status": "success", "message": f"Tests generated for {len(files)} files"})
 
 def run_config_ui():
-    threading.Timer(1.25, open_browser).start()
-    app.run(debug=False)
+    app.run(debug=True)
+
+if __name__ == '__main__':
+    run_config_ui()
