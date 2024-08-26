@@ -32,8 +32,9 @@
     
     <div class="footer">
         <a href="https://www.linkedin.com/in/naserjamal/" target="_blank" class="author">By Naser Jamal</a>
-        <button id="modelHelpBtn" class="model-help-btn">Model Help</button>
     </div>
+
+    <button id="modelHelpBtn" class="model-help-btn"><i class="fas fa-question-circle"></i> Model Help</button>
 
     <div id="modelHelpModal" class="modal">
         <div class="modal-content">
@@ -138,7 +139,7 @@
         var span = document.getElementsByClassName("close")[0];
 
         btn.onclick = function() {
-            modal.style.display = "block";
+            modal.style.display = "flex";
         }
 
         span.onclick = function() {

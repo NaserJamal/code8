@@ -75,7 +75,7 @@ button:hover {
 
 .model-help-btn {
     position: fixed;
-    right: 20px;
+    left: 20px;
     bottom: 20px;
     background-color: #007bff;
     color: white;
@@ -83,6 +83,10 @@ button:hover {
     padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .model-help-btn:hover {
@@ -99,16 +103,19 @@ button:hover {
     height: 100%;
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
     max-width: 600px;
     border-radius: 5px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .close {
@@ -130,16 +137,18 @@ button:hover {
     border: 1px solid #ccc;
     background-color: #f1f1f1;
     border-radius: 5px 5px 0 0;
+    display: flex;
 }
 
 .tab button {
     background-color: inherit;
-    float: left;
     border: none;
     outline: none;
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
+    flex: 1;
+    color: #333;
 }
 
 .tab button:hover {
@@ -148,6 +157,7 @@ button:hover {
 
 .tab button.active {
     background-color: #ccc;
+    font-weight: bold;
 }
 
 .tabcontent {
