@@ -5,33 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>test8 Configuration</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <header>
+        <h1><i class="fas fa-cogs"></i> test8 Configuration</h1>
+    </header>
     <div class="container">
         <div class="config-section">
-            <h2><i class="fas fa-cog"></i> Configuration</h2>
+            <h2><i class="fas fa-sliders-h"></i> Configuration</h2>
             <form id="configForm">
-                <label for="apiKey">API Key:</label>
-                <input type="text" id="apiKey" name="apiKey" value="{{ config.api_key }}">
+                <div class="form-group">
+                    <label for="apiKey">API Key:</label>
+                    <input type="text" id="apiKey" name="apiKey" value="{{ config.api_key }}" required>
+                </div>
 
-                <label for="modelProvider">Model Provider:</label>
-                <select id="modelProvider" name="modelProvider">
-                    <option value="">Select Provider</option>
-                    <option value="OpenAI" {% if config.model_provider == 'OpenAI' %}selected{% endif %}>OpenAI</option>
-                    <option value="Anthropic" {% if config.model_provider == 'Anthropic' %}selected{% endif %}>Anthropic</option>
-                </select>
+                <div class="form-group">
+                    <label for="modelProvider">Model Provider:</label>
+                    <select id="modelProvider" name="modelProvider" required>
+                        <option value="">Select Provider</option>
+                        <option value="OpenAI" {% if config.model_provider == 'OpenAI' %}selected{% endif %}>OpenAI</option>
+                        <option value="Anthropic" {% if config.model_provider == 'Anthropic' %}selected{% endif %}>Anthropic</option>
+                    </select>
+                </div>
 
-                <label for="model">Model:</label>
-                <select id="model" name="model" disabled>
-                    <option value="">Select Model</option>
-                </select>
+                <div class="form-group">
+                    <label for="model">Model:</label>
+                    <select id="model" name="model" required disabled>
+                        <option value="">Select Model</option>
+                    </select>
+                </div>
 
                 <div class="prompt-section">
                     <label>System Prompt:</label>
                     <div class="prompt-buttons">
-                        <button type="button" class="btn btn-success" id="defaultSystemPrompt">Default System Prompt</button>
-                        <button type="button" class="btn btn-danger" id="customSystemPrompt">Custom System Prompt</button>
+                        <button type="button" class="btn btn-outline" id="defaultSystemPrompt">Default</button>
+                        <button type="button" class="btn btn-outline" id="customSystemPrompt">Custom</button>
                     </div>
                     <textarea id="systemPrompt" name="systemPrompt" rows="4" style="display: none;">{{ config.system_prompt }}</textarea>
                 </div>
@@ -39,27 +49,29 @@
                 <div class="prompt-section">
                     <label>User Prompt:</label>
                     <div class="prompt-buttons">
-                        <button type="button" class="btn btn-success" id="defaultUserPrompt">Default User Prompt</button>
-                        <button type="button" class="btn btn-danger" id="customUserPrompt">Custom User Prompt</button>
+                        <button type="button" class="btn btn-outline" id="defaultUserPrompt">Default</button>
+                        <button type="button" class="btn btn-outline" id="customUserPrompt">Custom</button>
                     </div>
                     <textarea id="userPrompt" name="userPrompt" rows="4" style="display: none;">{{ config.user_prompt }}</textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Configuration</button>
             </form>
         </div>
 
         <div class="file-browser-section">
             <h2><i class="fas fa-folder-open"></i> File Browser</h2>
-            <div id="fileList"></div>
-            <div id="selectedFiles"></div>
+            <div id="fileList" class="file-list"></div>
+            <div id="selectedFiles" class="selected-files"></div>
             <button id="runTestsBtn" class="btn btn-success" disabled><i class="fas fa-play"></i> Run Tests</button>
         </div>
     </div>
     
-    <div class="author">
-        <a href="https://www.linkedin.com/in/naserjamal/" target="_blank">By Naser Jamal</a>
-    </div>
+    <footer>
+        <div class="author">
+            <a href="https://www.linkedin.com/in/naserjamal/" target="_blank">By Naser Jamal</a>
+        </div>
+    </footer>
 
     <button id="modelHelpBtn" class="model-help-btn" title="Model Help">
         <i class="fas fa-question-circle"></i>
@@ -107,256 +119,275 @@
     </div>
 
     <script>
-        const modelProvider = document.getElementById('modelProvider');
-        const model = document.getElementById('model');
-        const form = document.getElementById('configForm');
-        const defaultSystemPrompt = document.getElementById('defaultSystemPrompt');
-        const customSystemPrompt = document.getElementById('customSystemPrompt');
-        const systemPromptTextarea = document.getElementById('systemPrompt');
-        const defaultUserPrompt = document.getElementById('defaultUserPrompt');
-        const customUserPrompt = document.getElementById('customUserPrompt');
-        const userPromptTextarea = document.getElementById('userPrompt');
-
-        const models = {
-            OpenAI: ['gpt-4o-mini', 'gpt-4o-2024-08-06'],
-            Anthropic: ['claude-3-5-sonnet-20240620', 'claude-3-haiku-20240307']
-        };
-
-        const defaultSystemPromptText = "You are a helpful assistant that generates Python unit tests for the file named '{file_name}'. Do not include code blocks or explanations in your response, just the unittest code.";
-        const defaultUserPromptText = "Please generate unit tests for the following Python code from the file '{file_name}':\n\n{code_content}\n\nProvide a complete unittest class with test methods for each function in the code.\nDo not include any explanations or code blocks, just the unittest code.";
-
-        function updateModelOptions() {
-            model.innerHTML = '<option value="">Select Model</option>';
-            model.disabled = !modelProvider.value;
-            if (modelProvider.value) {
-                models[modelProvider.value].forEach(m => {
-                    const option = document.createElement('option');
-                    option.value = m;
-                    option.textContent = m;
-                    model.appendChild(option);
-                });
-            }
-        }
-
-        modelProvider.addEventListener('change', function() {
-            model.innerHTML = '<option value="">Select Model</option>';
-            model.disabled = !this.value;
-            if (this.value) {
-                models[this.value].forEach(m => {
-                    const option = document.createElement('option');
-                    option.value = m;
-                    option.textContent = m;
-                    if (m === '{{ config.model }}') {
-                        option.selected = true;
-                    }
-                    model.appendChild(option);
-                });
-            }
-        });
-
-        // form submission with prompt data
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const config = {
-                api_key: document.getElementById('apiKey').value,
-                model_provider: modelProvider.value,
-                model: model.value,
-                system_prompt: systemPromptTextarea.value,
-                user_prompt: userPromptTextarea.value
-            };
-            fetch('/save', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(config),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Configuration saved successfully!');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                alert('An error occurred while saving the configuration.');
-            });
-        });
-
-        // Load saved configuration on page load
         document.addEventListener('DOMContentLoaded', () => {
-            updateModelOptions();
-            if (model.value) {
-                model.value = '{{ config.model }}';
+            const modelProvider = document.getElementById('modelProvider');
+            const model = document.getElementById('model');
+            const form = document.getElementById('configForm');
+            const defaultSystemPrompt = document.getElementById('defaultSystemPrompt');
+            const customSystemPrompt = document.getElementById('customSystemPrompt');
+            const systemPromptTextarea = document.getElementById('systemPrompt');
+            const defaultUserPrompt = document.getElementById('defaultUserPrompt');
+            const customUserPrompt = document.getElementById('customUserPrompt');
+            const userPromptTextarea = document.getElementById('userPrompt');
+            const fileList = document.getElementById('fileList');
+            const selectedFiles = document.getElementById('selectedFiles');
+            const runTestsBtn = document.getElementById('runTestsBtn');
+
+            const models = {
+                OpenAI: ['gpt-4o-mini', 'gpt-4o-2024-08-06'],
+                Anthropic: ['claude-3-5-sonnet-20240620', 'claude-3-haiku-20240307']
+            };
+
+            const defaultSystemPromptText = "You are a helpful assistant that generates Python unit tests for the file named '{file_name}'. Do not include code blocks or explanations in your response, just the unittest code.";
+            const defaultUserPromptText = "Please generate unit tests for the following Python code from the file '{file_name}':\n\n{code_content}\n\nProvide a complete unittest class with test methods for each function in the code.\nDo not include any explanations or code blocks, just the unittest code.";
+
+            let currentPath = '.';
+            let selectedFilesList = [];
+
+            function updateModelOptions() {
+                model.innerHTML = '<option value="">Select Model</option>';
+                model.disabled = !modelProvider.value;
+                if (modelProvider.value) {
+                    models[modelProvider.value].forEach(m => {
+                        const option = document.createElement('option');
+                        option.value = m;
+                        option.textContent = m;
+                        model.appendChild(option);
+                    });
+                }
             }
-            initializePrompts();
-        });
 
-        // Initialize model select based on saved config
-        if (modelProvider.value) {
-            modelProvider.dispatchEvent(new Event('change'));
-        }
+            function initializePrompts() {
+                if (systemPromptTextarea.value !== defaultSystemPromptText) {
+                    customSystemPrompt.click();
+                } else {
+                    defaultSystemPrompt.click();
+                }
 
-        // Model Help Modal
-        var modal = document.getElementById("modelHelpModal");
-        var btn = document.getElementById("modelHelpBtn");
-        var span = document.getElementsByClassName("close")[0];
-
-        btn.onclick = function() {
-            modal.style.display = "flex";
-        }
-
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+                if (userPromptTextarea.value !== defaultUserPromptText) {
+                    customUserPrompt.click();
+                } else {
+                    defaultUserPrompt.click();
+                }
             }
-        }
 
-        function openTab(evt, tabName) {
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
+            function loadFiles(path) {
+                showSpinner();
+                fetch(`/browse?path=${encodeURIComponent(path)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        fileList.innerHTML = '';
+                        if (path !== '.') {
+                            const backBtn = createFileItem('..', 'directory');
+                            backBtn.onclick = () => loadFiles(path.split('/').slice(0, -1).join('/') || '.');
+                            fileList.appendChild(backBtn);
+                        }
+                        data.forEach(item => {
+                            const div = createFileItem(item.name, item.type);
+                            if (item.type === 'directory') {
+                                div.onclick = () => loadFiles(item.path);
+                            } else if (item.name.endsWith('.py')) {
+                                div.onclick = () => toggleFileSelection(item);
+                            }
+                            fileList.appendChild(div);
+                        });
+                        hideSpinner();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showErrorMessage('Failed to load files. Please try again.');
+                        hideSpinner();
+                    });
             }
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
+
+            function createFileItem(name, type) {
+                const div = document.createElement('div');
+                div.textContent = name;
+                div.classList.add('file-item', type, 'fade-in');
+                return div;
             }
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-        }
 
-        // File browsing and selection
-        const fileList = document.getElementById('fileList');
-        const selectedFiles = document.getElementById('selectedFiles');
-        const runTestsBtn = document.getElementById('runTestsBtn');
-        let currentPath = '.';
-        let selectedFilesList = [];
+            function toggleFileSelection(file) {
+                const index = selectedFilesList.findIndex(f => f.path === file.path);
+                if (index > -1) {
+                    selectedFilesList.splice(index, 1);
+                } else {
+                    selectedFilesList.push(file);
+                }
+                updateSelectedFiles();
+            }
 
-        function loadFiles(path) {
-            fetch(`/browse?path=${encodeURIComponent(path)}`)
+            function updateSelectedFiles() {
+                selectedFiles.innerHTML = '';
+                selectedFilesList.forEach(file => {
+                    const div = document.createElement('div');
+                    div.textContent = file.name;
+                    div.classList.add('selected-file', 'fade-in');
+                    selectedFiles.appendChild(div);
+                });
+                runTestsBtn.disabled = selectedFilesList.length === 0;
+            }
+
+            function showSpinner() {
+                const spinner = document.createElement('div');
+                spinner.classList.add('spinner');
+                document.body.appendChild(spinner);
+            }
+
+            function hideSpinner() {
+                const spinner = document.querySelector('.spinner');
+                if (spinner) {
+                    spinner.remove();
+                }
+            }
+
+            function showErrorMessage(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('error-message', 'fade-in');
+                errorDiv.textContent = message;
+                document.body.appendChild(errorDiv);
+                setTimeout(() => {
+                    errorDiv.remove();
+                }, 5000);
+            }
+
+            function showSuccessMessage(message) {
+                const successDiv = document.createElement('div');
+                successDiv.classList.add('success-message', 'fade-in');
+                successDiv.textContent = message;
+                document.body.appendChild(successDiv);
+                setTimeout(() => {
+                    successDiv.remove();
+                }, 5000);
+            }
+
+            modelProvider.addEventListener('change', updateModelOptions);
+
+            defaultSystemPrompt.addEventListener('click', () => {
+                systemPromptTextarea.value = defaultSystemPromptText;
+                systemPromptTextarea.style.display = 'none';
+                defaultSystemPrompt.classList.add('active');
+                customSystemPrompt.classList.remove('active');
+            });
+
+            customSystemPrompt.addEventListener('click', () => {
+                systemPromptTextarea.style.display = 'block';
+                defaultSystemPrompt.classList.remove('active');
+                customSystemPrompt.classList.add('active');
+            });
+
+            defaultUserPrompt.addEventListener('click', () => {
+                userPromptTextarea.value = defaultUserPromptText;
+                userPromptTextarea.style.display = 'none';
+                defaultUserPrompt.classList.add('active');
+                customUserPrompt.classList.remove('active');
+            });
+
+            customUserPrompt.addEventListener('click', () => {
+                userPromptTextarea.style.display = 'block';
+                defaultUserPrompt.classList.remove('active');
+                customUserPrompt.classList.add('active');
+            });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                showSpinner();
+                const config = {
+                    api_key: document.getElementById('apiKey').value,
+                    model_provider: modelProvider.value,
+                    model: model.value,
+                    system_prompt: systemPromptTextarea.value,
+                    user_prompt: userPromptTextarea.value
+                };
+                fetch('/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(config),
+                })
                 .then(response => response.json())
                 .then(data => {
-                    fileList.innerHTML = '';
-                    if (path !== '.') {
-                        const backBtn = document.createElement('div');
-                        backBtn.textContent = '..';
-                        backBtn.classList.add('file-item', 'directory');
-                        backBtn.onclick = () => loadFiles(path.split('/').slice(0, -1).join('/') || '.');
-                        fileList.appendChild(backBtn);
+                    if (data.status === 'success') {
+                        showSuccessMessage('Configuration saved successfully!');
+                    } else {
+                        showErrorMessage('Failed to save configuration. Please try again.');
                     }
-                    data.forEach(item => {
-                        const div = document.createElement('div');
-                        div.textContent = item.name;
-                        div.classList.add('file-item', item.type);
-                        if (item.type === 'directory') {
-                            div.onclick = () => loadFiles(item.path);
-                        } else if (item.name.endsWith('.py')) {
-                            div.onclick = () => toggleFileSelection(item);
-                        }
-                        fileList.appendChild(div);
-                    });
+                    hideSpinner();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    showErrorMessage('An error occurred while saving the configuration.');
+                    hideSpinner();
                 });
-        }
-
-        function toggleFileSelection(file) {
-            const index = selectedFilesList.findIndex(f => f.path === file.path);
-            if (index > -1) {
-                selectedFilesList.splice(index, 1);
-            } else {
-                selectedFilesList.push(file);
-            }
-            updateSelectedFiles();
-        }
-
-        function updateSelectedFiles() {
-            selectedFiles.innerHTML = '';
-            selectedFilesList.forEach(file => {
-                const div = document.createElement('div');
-                div.textContent = file.name;
-                div.classList.add('selected-file');
-                selectedFiles.appendChild(div);
             });
-            runTestsBtn.disabled = selectedFilesList.length === 0;
-        }
 
-        runTestsBtn.onclick = () => {
-            const files = selectedFilesList.map(file => file.path);
-            fetch('/run_tests', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ files }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while running tests.');
+            runTestsBtn.onclick = () => {
+                showSpinner();
+                const files = selectedFilesList.map(file => file.path);
+                fetch('/run_tests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ files }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showSuccessMessage(data.message);
+                    hideSpinner();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showErrorMessage('An error occurred while running tests.');
+                    hideSpinner();
+                });
+            };
+
+            // Initialize the page
+            updateModelOptions();
+            initializePrompts();
+            loadFiles(currentPath);
+
+            // Model Help Modal
+            const modal = document.getElementById("modelHelpModal");
+            const btn = document.getElementById("modelHelpBtn");
+            const span = document.getElementsByClassName("close")[0];
+
+            btn.onclick = function() {
+                modal.style.display = "flex";
+            }
+
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+
+            function openTab(evt, tabName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+
+            // Add event listeners for tab buttons
+            document.querySelectorAll('.tablinks').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    openTab(event, this.textContent.trim());
+                });
             });
-        };
-
-        loadFiles(currentPath);
-
-        // JavaScript for prompt customization
-        // const defaultSystemPrompt = document.getElementById('defaultSystemPrompt');
-        // const customSystemPrompt = document.getElementById('customSystemPrompt');
-        // const systemPromptTextarea = document.getElementById('systemPrompt');
-        // const defaultUserPrompt = document.getElementById('defaultUserPrompt');
-        // const customUserPrompt = document.getElementById('customUserPrompt');
-        // const userPromptTextarea = document.getElementById('userPrompt');
-
-        // const defaultSystemPromptText = "You are a helpful assistant that generates Python unit tests for the file named '{file_name}'. Do not include code blocks or explanations in your response, just the unittest code.";
-        // const defaultUserPromptText = "Please generate unit tests for the following Python code from the file '{file_name}':\n\n{code_content}\n\nProvide a complete unittest class with test methods for each function in the code.\nDo not include any explanations or code blocks, just the unittest code.";
-
-        modelProvider.addEventListener('change', updateModelOptions);
-
-        function initializePrompts() {
-            if (systemPromptTextarea.value !== defaultSystemPromptText) {
-                customSystemPrompt.click();
-            } else {
-                defaultSystemPrompt.click();
-            }
-
-            if (userPromptTextarea.value !== defaultUserPromptText) {
-                customUserPrompt.click();
-            } else {
-                defaultUserPrompt.click();
-            }
-        }
-
-        defaultSystemPrompt.addEventListener('click', () => {
-            systemPromptTextarea.value = defaultSystemPromptText;
-            systemPromptTextarea.style.display = 'none';
-            defaultSystemPrompt.classList.add('active');
-            customSystemPrompt.classList.remove('active');
-        });
-
-        customSystemPrompt.addEventListener('click', () => {
-            systemPromptTextarea.style.display = 'block';
-            defaultSystemPrompt.classList.remove('active');
-            customSystemPrompt.classList.add('active');
-        });
-
-        defaultUserPrompt.addEventListener('click', () => {
-            userPromptTextarea.value = defaultUserPromptText;
-            userPromptTextarea.style.display = 'none';
-            defaultUserPrompt.classList.add('active');
-            customUserPrompt.classList.remove('active');
-        });
-
-        customUserPrompt.addEventListener('click', () => {
-            userPromptTextarea.style.display = 'block';
-            defaultUserPrompt.classList.remove('active');
-            customUserPrompt.classList.add('active');
         });
     </script>
 </body>
