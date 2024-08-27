@@ -200,14 +200,23 @@ footer {
     width: 100%;
 }
 
+.author {
+    position: fixed;
+    right: 20px;
+    bottom: 70px;
+    font-size: 0.9em;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+}
+
 .author a {
-    color: #ecf0f1;
+    color: #555;
     text-decoration: none;
     transition: color 0.3s;
 }
 
 .author a:hover {
-    color: #b4ffec;
+    color: #3498db;
     opacity: 1;
 }
 
@@ -244,7 +253,7 @@ footer {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
@@ -255,27 +264,49 @@ footer {
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
     max-width: 600px;
     border-radius: 5px;
+    max-height: 52vh; /* Increased height */
+    overflow-y: auto;
+    position: relative;
 }
 
 .close {
     color: #aaa;
-    float: right;
+    position: absolute;
+    top: 10px;
+    right: 20px;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    line-height: 1;
 }
 
 .close:hover,
 .close:focus {
     color: #000;
     text-decoration: none;
-    cursor: pointer;
+}
+
+/* Ensure modal content is scrollable if it exceeds the max-height */
+.modal-body {
+    max-height: calc(52vh - 120px); /* Adjust based on your header and footer height */
+    overflow-y: auto;
+}
+
+/* Style for modal header */
+.modal h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Ensure buttons in modal have some space */
+.modal .btn {
+    margin-top: 10px;
 }
 
 #profileList {
@@ -588,4 +619,28 @@ header h1 {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+.btn-secondary {
+    background-color: #28a745; /* Green for Load Configuration */
+}
+
+.btn-secondary:hover {
+    background-color: #218838;
+}
+
+.edit-profile {
+    background-color: #ffc107; /* Dark yellow for Edit */
+}
+
+.edit-profile:hover {
+    background-color: #e0a800;
+}
+
+.delete-profile {
+    background-color: #dc3545; /* Red for Delete */
+}
+
+.delete-profile:hover {
+    background-color: #c82333;
 }
