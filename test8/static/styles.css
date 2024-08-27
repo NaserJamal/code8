@@ -203,10 +203,11 @@ footer {
 .author {
     position: fixed;
     right: 20px;
-    bottom: 70px;
+    bottom: 20px; /* Lowered to the bottom */
     font-size: 0.9em;
     opacity: 0.3;
     transition: opacity 0.3s;
+    z-index: 998; /* Ensure it's below the model-help-btn */
 }
 
 .author a {
@@ -216,14 +217,14 @@ footer {
 }
 
 .author a:hover {
-    color: #3498db;
+    color: #000000;
     opacity: 1;
 }
 
 .model-help-btn {
     position: fixed;
     right: 20px;
-    bottom: 70px;
+    bottom: 50px; /* Positioned above the author credit */
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -237,6 +238,7 @@ footer {
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     transition: background-color 0.3s, transform 0.1s;
+    z-index: 999; /* Ensure it's above the author credit */
 }
 
 .model-help-btn:hover {
@@ -593,11 +595,6 @@ input[type="text"]:focus, select:focus, textarea:focus {
 footer {
     background-color: var(--primary-color);
     color: white;
-}
-
-/* Enhance the model help button */
-.model-help-btn {
-    transition: all 0.3s ease;
 }
 
 .model-help-btn:hover {
