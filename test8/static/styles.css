@@ -630,11 +630,11 @@ header h1 {
 }
 
 .edit-profile {
-    background-color: #ffc107; /* Dark yellow for Edit */
+    background-color: #28a745; /* Dark yellow for Edit */
 }
 
 .edit-profile:hover {
-    background-color: #e0a800;
+    background-color: #218838;
 }
 
 .delete-profile {
