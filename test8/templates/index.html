@@ -43,11 +43,11 @@
                     <div class="prompt-buttons">
                         <button type="button" class="btn btn-outline tooltip" id="defaultSystemPrompt">
                             Default
-                            <span class="tooltiptext">Use the default system prompt</span>
+                            <span class="tooltiptext">Default system <br>.py files only</span>
                         </button>
                         <button type="button" class="btn btn-outline tooltip" id="customSystemPrompt">
                             Custom
-                            <span class="tooltiptext">Use a custom system prompt</span>
+                            <span class="tooltiptext">Custom system <br>any file type</span>
                         </button>
                     </div>
                     <textarea id="systemPrompt" name="systemPrompt" rows="4" style="display: none;">{{ config.system_prompt }}</textarea>
@@ -58,11 +58,11 @@
                     <div class="prompt-buttons">
                         <button type="button" class="btn btn-outline tooltip" id="defaultUserPrompt">
                             Default
-                            <span class="tooltiptext">Use the default user prompt</span>
+                            <span class="tooltiptext">Default user <br>.py files only</span>
                         </button>
                         <button type="button" class="btn btn-outline tooltip" id="customUserPrompt">
                             Custom
-                            <span class="tooltiptext">Use a custom user prompt</span>
+                            <span class="tooltiptext">Custom user <br>any file type</span>
                         </button>
                     </div>
                     <textarea id="userPrompt" name="userPrompt" rows="4" style="display: none;">{{ config.user_prompt }}</textarea>
@@ -155,30 +155,30 @@
             <div id="Quality" class="tabcontent" style="display:block;">
                 <h3>Quality Ranking</h3>
                 <ol class="ranking">
-                    <li>Model 1 <span class="description">Description for Model 1</span></li>
-                    <li>Model 2 <span class="description">Description for Model 2</span></li>
-                    <li>Model 3 <span class="description">Description for Model 3</span></li>
-                    <li>Model 4 <span class="description">Description for Model 4</span></li>
+                    <li>Claude 3.5 Sonnet<span class="description">Highest Quality, useful for most complex of tasks</span></li>
+                    <li>GPT-4o-2024-08-06<span class="description">Great Quality, useful for wide range of tasks</span></li>
+                    <li>GPT-4o mini<span class="description">Good Quality, useful for simpler/quantity tasks</span></li>
+                    <li>Claude 3 Haiku<span class="description">Low Quality, doesn't follow instructions well</span></li>
                 </ol>
             </div>
 
             <div id="Speed" class="tabcontent">
                 <h3>Speed Ranking</h3>
                 <ol class="ranking">
-                    <li>Model 1 <span class="description">Description for Model 1</span></li>
-                    <li>Model 2 <span class="description">Description for Model 2</span></li>
-                    <li>Model 3 <span class="description">Description for Model 3</span></li>
-                    <li>Model 4 <span class="description">Description for Model 4</span></li>
+                    <li>GPT-4o mini<span class="description">Fastest</span></li>
+                    <li>Claude 3 Haiku <span class="description">Nearly as fast or on par with mini</span></li>
+                    <li>GPT-4o-2024-08-06<span class="description">Moderate speed</span></li>
+                    <li>Claude 3.5 Sonnet<span class="description">Slower</span></li>
                 </ol>
             </div>
 
             <div id="Price" class="tabcontent">
                 <h3>Price Ranking</h3>
                 <ol class="ranking">
-                    <li>Model 1 <span class="description">Description for Model 1</span></li>
-                    <li>Model 2 <span class="description">Description for Model 2</span></li>
-                    <li>Model 3 <span class="description">Description for Model 3</span></li>
-                    <li>Model 4 <span class="description">Description for Model 4</span></li>
+                    <li>GPT-4o mini<span class="description">$0.3/1m Tokens</span></li>
+                    <li>Claude 3 Haiku<span class="description">$0.5/1m Tokens</span></li>
+                    <li>GPT-4o-2024-08-06<span class="description">$4.4/1m Tokens</span></li>
+                    <li>Claude 3.5 Sonnet<span class="description">$6/1m Tokens</span></li>
                 </ol>
             </div>
         </div>
