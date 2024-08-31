@@ -1,7 +1,0 @@
-setup.py
-test8.egg-info/PKG-INFO
-test8.egg-info/SOURCES.txt
-test8.egg-info/dependency_links.txt
-test8.egg-info/entry_points.txt
-test8.egg-info/requires.txt
-test8.egg-info/top_level.txt
