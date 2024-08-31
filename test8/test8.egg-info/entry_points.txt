@@ -1,3 +1,0 @@
-[console_scripts]
-test8 = test8:main
-
